@@ -40,10 +40,15 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-  console.log(request.body);
-  if (!request.body.name) {
-    return response.status(400).json({error: 'name missing'})
+  const unique = persons.find((p) => p.name === request.body.name);
+
+  if (!request.body.name || !request.body.number) {
+    return response.status(400).json({error: 'name or number missing'})
   }
+  if (unique) {
+    return response.status(400).json({error: 'name must be unique'})
+  }
+
   const person = {
     name: request.body.name,
     number: request.body.number,
