@@ -1,0 +1,11 @@
+{
+  "name": "agenda-telefonica",
+  "version": "1.0.0",
+  "description": "backend de la parte 3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "me",
+  "license": "ISC"
+}
