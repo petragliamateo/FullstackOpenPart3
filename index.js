@@ -1,11 +1,13 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 let persons = require('./db.json')
 const app = express()
 const date = new Date;
 
 app.use(express.json())
+app.use(cors())
 // app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 app.use(morgan((tokens, req, res) => {
   return [
