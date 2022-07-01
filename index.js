@@ -8,6 +8,7 @@ const date = new Date;
 
 app.use(express.json())
 app.use(cors())
+app.use(express.static('build'))
 // app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 app.use(morgan((tokens, req, res) => {
   return [
