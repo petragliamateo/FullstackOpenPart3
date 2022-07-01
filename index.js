@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const Person = require('./models/persons')
+const Person = require('./models/persons');
 
 const app = express()
 const date = new Date;
@@ -50,32 +50,43 @@ app.get('/info', (request, response) => {
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
     .then((result) => {
-      console.log(result);
       response.status(204).end()
     })
     .catch((error) => next(error))
 })
 
+app.put('/api/persons/:id', (req, res, next) => {
+  const newPeople = {
+    name: req.body.name,
+    number: req.body.number,
+  }
+
+  Person.findByIdAndUpdate(req.params.id, newPeople, { new: true })
+    .then((updatedPeople) => {
+      res.json(updatedPeople)
+    })
+    .catch((error) => next(error))
+})
+
 app.post('/api/persons', (request, response) => {
-  /*
-  const unique = persons.find((p) => p.name === request.body.name);
   if (!request.body.name || !request.body.number) {
-    return response.status(400).json({error: 'name or number missing'})
-  }
-  if (unique) {
-    return response.status(400).json({error: 'name must be unique'})
-  }
-  */
-  if (!request.body.name) {
     return response.status(400).json({error: 'name or number missing'})
   }
   const people = new Person({
     name: request.body.name,
     number: request.body.number,
   })
-  people.save().then((savedPeople) => {
-    response.json(savedPeople);
-  })
+
+  Person.find({ name: people.name })
+    .then((p) => {
+      if (p.length) {
+        return response.status(400).json({error: 'name must be unique'})
+      }
+
+      people.save().then((savedPeople) => {
+        response.json(savedPeople);
+      })
+    })
 })
 
 const PORT = process.env.PORT || 3001
