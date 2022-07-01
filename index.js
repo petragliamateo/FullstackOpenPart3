@@ -7,10 +7,10 @@ const Person = require('./models/persons');
 const app = express()
 const date = new Date;
 
+// Middlewares iniciales:
 app.use(express.json())
 app.use(cors())
 app.use(express.static('build'))
-// app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 app.use(morgan((tokens, req, res) => {
   return [
       tokens.method(req, res),
@@ -21,6 +21,18 @@ app.use(morgan((tokens, req, res) => {
       JSON.stringify(req.body),
     ].join(' ')
 }))
+
+// Rutas:
+app.get('/info', (request, response) => {
+  Person.find({}).then((p) => {
+    response.send(`
+    <div>
+      <p>Phonebook has info for ${p.length} people</p>
+      <p>${date}</p>
+    </div>
+    `);
+  })
+})
 
 app.get('/api/persons', (request, response) => {
   Person.find({}).then((persons) => {
@@ -34,17 +46,6 @@ app.get('/api/persons/:id', (request, response, next) => {
       response.json(person);
     })
     .catch((error) => next(error))
-})
-
-app.get('/info', (request, response) => {
-  Person.find({}).then((p) => {
-    response.send(`
-    <div>
-      <p>Phonebook has info for ${p.length} people</p>
-      <p>${date}</p>
-    </div>
-    `);
-  })
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
