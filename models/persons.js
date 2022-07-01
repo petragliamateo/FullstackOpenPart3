@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator')
+// mongoose-unique-validator es un package para validar valores únicos en el esquema.
 
-console.log('Connecting to DB');
-mongoose.connect(process.env.MONGODB_URI)
+// Connection
+const url = process.env.MONGODB_URI;
+console.log('Connecting to DB:', url);
+mongoose.connect(url)
   .then((result) => {
     console.log('Connected!');
   })
@@ -9,9 +13,17 @@ mongoose.connect(process.env.MONGODB_URI)
     console.log('Error connecting to MongoDB', error.message);
   })
 
+// Schema
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  number: {
+    type: String,
+    required: true,
+  },
 });
 
 personSchema.set('toJSON', {
@@ -21,5 +33,8 @@ personSchema.set('toJSON', {
     delete returnedObj.__v
   }
 })
+
+// Se debe agregar el plugin uniqueValidator al esquema:
+personSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model('Person', personSchema);

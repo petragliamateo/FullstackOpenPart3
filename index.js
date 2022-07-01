@@ -69,25 +69,19 @@ app.put('/api/persons/:id', (req, res, next) => {
     .catch((error) => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
+  /*
   if (!request.body.name || !request.body.number) {
     return response.status(400).json({error: 'name or number missing'})
   }
+  */
   const people = new Person({
     name: request.body.name,
     number: request.body.number,
   })
-
-  Person.find({ name: people.name })
-    .then((p) => {
-      if (p.length) {
-        return response.status(400).json({error: 'name must be unique'})
-      }
-
-      people.save().then((savedPeople) => {
-        response.json(savedPeople);
-      })
-    })
+  people.save().then((savedPeople) => {
+    response.json(savedPeople);
+  }).catch((error) => next(error))
 })
 
 const PORT = process.env.PORT || 3001
@@ -101,7 +95,9 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message })
+  }
 
   next(error)
 }
