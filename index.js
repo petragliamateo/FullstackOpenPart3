@@ -1,9 +1,12 @@
 const express = require('express')
+const morgan = require('morgan')
+
 let persons = require('./db.json')
 const app = express()
 const date = new Date;
 
 app.use(express.json())
+app.use(morgan("tiny"))
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World</h1>')
