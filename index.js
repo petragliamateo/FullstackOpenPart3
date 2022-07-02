@@ -62,7 +62,9 @@ app.put('/api/persons/:id', (req, res, next) => {
     number: req.body.number,
   }
 
-  Person.findByIdAndUpdate(req.params.id, newPeople, { new: true })
+  const options = { runValidators: true, new: true }
+  // options object tiene la propiedad para ver si corre o no los validadores
+  Person.findByIdAndUpdate(req.params.id, newPeople, options)
     .then((updatedPeople) => {
       res.json(updatedPeople)
     })
